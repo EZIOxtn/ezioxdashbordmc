@@ -77,7 +77,7 @@ private void handleNewPlayer(Player player) {
     };
 
     // Skin command (Novaskin direct URL)
-    String skinCommand = "skin set https://s.namemc.com/i/cc7fe9c6cac4097f.png "  + name ;
+    String skinCommand = "skin set https://s.namemc.com/i/cc7fe9c6cac4097f.png " ;
 
     Bukkit.getScheduler().runTask(this, () -> {
 
