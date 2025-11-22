@@ -64,7 +64,16 @@ To build:
 
 ```sh
 .\gradlew.bat build -x checkstyleMain -x spotbugsMain
+```
 
+## 📁 File Structure
 
-- Applies a custom skin automatically:
+  KillManager → Handles tracking, saving, and loading kill data
+
+  KillListener → Listens to kill events
+
+  PlayerDataAutoSave → Periodic autosave (async)
+
+   ExamplePlugin → Main plugin logic (join events, starter items, skin setting)
+
   
