@@ -1,0 +1,25 @@
+main: com.ezioxdashbordmc.dashbordmc.ExamplePlugin
+name: dashbordmc
+version: "${VERSION}"
+api-version: "1.21.1"
+author: EZIOxtn
+description: A plugin that the mc dashbord need to run
+commands:
+  ex:
+    description: Base command for EXAMPLE
+    usage: "For a list of commands, type /ex help"
+    aliases: example
+  getdata:
+    description: Returns a JSON dump of a player's data to the console
+    usage: "/getdata <player>"
+    permission: example.getdata
+    permission-message: "You don't have permission to use this command."
+permissions:
+  example.test:
+    description: DESCRIPTION
+    default: true
+  example.*:
+    description: Grants all other permissions
+    default: false
+    children:
+      example.test: true
