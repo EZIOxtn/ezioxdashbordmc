@@ -6,6 +6,7 @@ This plugin provides:
 - A **first-join detection system** that gives new players a starter kit.
 - Automatic **skin assignment** from an external URL (NovaSkin/NameMC).
 - A backend data interface used by the **DashboardMC** web dashboard.
+- ⚠️ this plugin need "SkinRestorer.jar ", "PlaceholderApi.jar" to work properly 
 
 This plugin is NOT intended to be used alone — it is the backend bridge that the **DashboardMC** panel communicates with.
 
