@@ -5,24 +5,35 @@ import com.destroystokyo.paper.profile.ProfileProperty;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
+import org.bukkit.Location;
+import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
+import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
-public class GetDataCommand implements CommandExecutor {
+public class GetDataCommand implements CommandExecutor, Listener  {
     private final ExamplePlugin plugin;
     private final KillManager killManager;
     private final Logger logger;
+      // Track when players joined
+    private final Map<UUID, Long> joinTimes = new HashMap<>();
+    // Track total accumulated time
+    private final Map<UUID, Long> totalTimes = new HashMap<>();
 
     public GetDataCommand(ExamplePlugin plugin, KillManager killManager) {
         this.plugin = plugin;
@@ -52,13 +63,58 @@ public class GetDataCommand implements CommandExecutor {
         sender.sendMessage("§6Player data (JSON): " + jsonOutput);
         return true;
     }
+    
+    @EventHandler
+public void onPlayerJoin(PlayerJoinEvent event) {
+    UUID uuid = event.getPlayer().getUniqueId();
+    joinTimes.put(uuid, System.currentTimeMillis());
+}
 
+@EventHandler
+public void onPlayerQuit(PlayerQuitEvent event) {
+    UUID uuid = event.getPlayer().getUniqueId();
+    long joinedAt = joinTimes.getOrDefault(uuid, System.currentTimeMillis());
+    long sessionTime = System.currentTimeMillis() - joinedAt;
+
+    totalTimes.put(uuid, totalTimes.getOrDefault(uuid, 0L) + sessionTime);
+    joinTimes.remove(uuid);
+}
     public String generatePlayerJson(Player target) {
         StringBuilder json = new StringBuilder();
         json.append("{");
         json.append("\"player\":\"").append(escape(target.getName())).append("\",");
         json.append("\"uuid\":\"").append(target.getUniqueId()).append("\",");
+          Location currentLoc = target.getLocation();
+        json.append("\"location\":{");
+        json.append("\"world\":\"").append(escape(currentLoc.getWorld().getName())).append("\",");
+        json.append("\"x\":").append(currentLoc.getX()).append(",");
+        json.append("\"y\":").append(currentLoc.getY()).append(",");
+        json.append("\"z\":").append(currentLoc.getZ());
+        json.append("},");
 
+        long currentSessionTime = System.currentTimeMillis() - joinTimes.getOrDefault(target.getUniqueId(), System.currentTimeMillis());
+        long totalSessionTime = totalTimes.getOrDefault(target.getUniqueId(), 0L) + currentSessionTime;
+
+        json.append("\"session_time\":{");
+        json.append("\"current\":").append(currentSessionTime).append(",");
+        json.append("\"total\":").append(totalSessionTime);
+json.append("},");
+
+
+// --- Add Player's Bed/Respawn Spawn Point ---
+        Location bedSpawnLoc = target.getBedSpawnLocation();
+        json.append("\"bed_spawn\":{");
+        if (bedSpawnLoc != null) {
+            json.append("\"world\":\"").append(escape(bedSpawnLoc.getWorld().getName())).append("\",");
+            json.append("\"x\":").append(bedSpawnLoc.getX()).append(",");
+            json.append("\"y\":").append(bedSpawnLoc.getY()).append(",");
+            json.append("\"z\":").append(bedSpawnLoc.getZ()).append(",");
+            json.append("\"set\":").append(true);
+        } else {
+            // If they have no valid bed spawn point set, note that
+            json.append("\"set\":").append(false);
+        }
+        json.append("},");
         // Skin
         json.append("\"skin\":{");
         try {
