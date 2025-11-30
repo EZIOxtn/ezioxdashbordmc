@@ -3,17 +3,24 @@ package com.ezioxdashbordmc.dashbordmc;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.OfflinePlayer; // Added for isNewPlayer method signature
-import org.bukkit.entity.Player; // Added for onPlayerJoin method signature
-import org.bukkit.event.EventHandler; // Added for the event listener
-import org.bukkit.event.Listener; // Added to implement Listener
+import org.bukkit.OfflinePlayer; 
+import org.bukkit.entity.Player; 
+import org.bukkit.event.EventHandler; 
+import org.bukkit.event.Listener; 
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.command.CommandSender;
+import java.util.HashMap;
+import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileWriter;
 
 public class ExamplePlugin extends JavaPlugin implements Listener {
     // build cmd , .\gradlew.bat build -x checkstyleMain -x spotbugsMain
     private KillManager killManager;
-
+     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     @Override
     public void onEnable() {
         PaperLib.suggestPaper(this);
@@ -25,27 +32,34 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new KillListener(killManager), this);
         Bukkit.getPluginManager().registerEvents(this, this);
         GetDataCommand getDataCommand = new GetDataCommand(this, killManager);
+        getServer().getPluginManager().registerEvents(getDataCommand, this);
         if (getCommand("getdata") != null) {
             getCommand("getdata").setExecutor(getDataCommand);
         }
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(
                 this,
-                 () -> { if (killManager != null) {
+                 () -> {
+                    
+                    
+                     if (killManager != null) {
                         killManager.saveData();
                         }
                         getLogger().info("Kill tracking system saved.");
+                        saveOnlinePlayers();
                         },
+                        
                 0L,
                 200L
         );
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
+        Bukkit.getScheduler().runTaskTimer(
                 this,
                 new PlayerDataAutoSave(this, getDataCommand),
-                0L,
+                170L,
                 200L
         );
-        getLogger().info("Kill tracking system enabled!");
+        
+        
     }
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -56,8 +70,29 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
             
             getLogger().info("Detected NEW Player: " + player.getName() + ". Running new player command.");
             
-            // Execute the command
+          
             handleNewPlayer(player);
+        }
+    }
+
+private void saveOnlinePlayers() {
+        Player[] players = Bukkit.getOnlinePlayers().toArray(new Player[0]);
+
+        Map<String, Object> onlineData = new HashMap<>();
+        for (Player player : players) {
+            Map<String, Object> pdata = new HashMap<>();
+            pdata.put("uuid", player.getUniqueId().toString());
+            pdata.put("name", player.getName());
+            onlineData.put(player.getName(), pdata);
+        }
+
+        File file = new File(getDataFolder(), "online.json");
+        file.getParentFile().mkdirs(); 
+
+        try (FileWriter writer = new FileWriter(file)) {
+            gson.toJson(onlineData, writer);
+        } catch (IOException e) {
+            getLogger().severe("Failed to save online players: " + e.getMessage());
         }
     }
 private void handleNewPlayer(Player player) {
