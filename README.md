@@ -48,18 +48,19 @@ When a brand-new player joins the server:
 
 
 - Sends a welcome message through console.
+---
 
 ### 🔄 Dashboard Integration
-This plugin is designed to integrate with the **DashboardMC** web dashboard (your other repository).  
-DashboardMC uses:
-- The kill tracking API  
-- The autosave system  
-- `/getdata` command  
-- Player event hooks  
+This plugin is designed specifically to integrate with the **DashboardMC web dashboard**.
 
-to sync server data with the web panel.
+The dashboard uses:
+- Kill tracking API
+- Autosave system
+- `/getdata` command
+- Player event hooks
 
-**This plugin is REQUIRED for DashboardMC to function correctly.**
+📌 **This plugin is REQUIRED for DashboardMC to function correctly.**
+[GitHub Repository](https://github.com/EZIOxtn/PaperMC-Dashboard)
 
 ---
 
