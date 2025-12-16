@@ -1,17 +1,31 @@
-# DashboardMC Companion Plugin  
-A Paper/Spigot plugin required for the **MC Dashboard** project.
+# DashboardMC Companion Plugin
 
-This plugin provides:
-- A **kill tracking system** (persistent storage, autosave, API).
-- A **first-join detection system** that gives new players a starter kit.
-- Automatic **skin assignment** from an external URL (NovaSkin/NameMC).
-- A backend data interface used by the **DashboardMC** web dashboard.
-- ⚠️ this plugin need "SkinRestorer.jar ", "PlaceholderApi.jar" to work properly 
+A **Paper/Spigot Minecraft plugin** required for the **DashboardMC** project.  
+This plugin acts as the **backend bridge** between your Minecraft server and the DashboardMC web panel.
 
-This plugin is NOT intended to be used alone — it is the backend bridge that the **DashboardMC** panel communicates with.
+> ⚠️ This plugin is **NOT intended to be used alone**.
 
 ---
 
+## 🚀 What This Plugin Provides
+
+- 🔫 **Kill tracking system** (persistent storage, autosave, API)
+- 👤 **First-join detection** with automatic starter kit
+- 🎨 **Automatic skin assignment** from external services (NovaSkin / NameMC)
+- 🌐 **Backend data interface** used by the DashboardMC web dashboard
+
+---
+
+## ⚠️ Required Dependencies
+
+This plugin **will NOT work** without the following plugins installed:
+
+- `SkinRestorer.jar`
+- `PlaceholderAPI.jar`
+
+Make sure both are placed in your server’s `plugins/` folder before starting the server.
+
+---
 ## ✨ Features
 
 ### 🔫 Kill Tracking System
