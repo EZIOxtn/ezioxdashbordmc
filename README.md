@@ -60,7 +60,7 @@ The dashboard uses:
 - Player event hooks
 
 📌 **This plugin is REQUIRED for DashboardMC to function correctly.**
-[GitHub Repository](https://github.com/EZIOxtn/PaperMC-Dashboard)
+[PaperMC Dashboard](https://github.com/EZIOxtn/PaperMC-Dashboard)
 
 ---
 
